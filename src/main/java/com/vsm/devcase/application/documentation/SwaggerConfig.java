@@ -38,11 +38,9 @@ public class SwaggerConfig {
 
         ApiInfoBuilder apiInfoBuilder = new ApiInfoBuilder();
 
-        apiInfoBuilder.title("Api-venda");
-        apiInfoBuilder.description("Api VSM - Findelização de cliente");
+        apiInfoBuilder.title("Api");
+        apiInfoBuilder.description("Api Documentação");
         apiInfoBuilder.version("1.0");
-        apiInfoBuilder.termsOfServiceUrl("Termo de uso: Deve ser usada para estudos.");
-        apiInfoBuilder.license("Licença - Open Source");
         apiInfoBuilder.licenseUrl("www.vsm.com.br");
         apiInfoBuilder.contact(this.contato());
 
@@ -51,10 +49,9 @@ public class SwaggerConfig {
     }
 
     private Contact contato() {
-
         return new Contact(
-                "Junior Cantador",
-                "https://www.linkedin.com/in/j%C3%BAnior-de-menezes-cantador-6b316175/",
-                "ciceroednilson@gmail.com");
+                "Junior de Menezes Cantador",
+                "https://github.com/jrcantador",
+                "jrcantador@gmail.com");
     }
 }

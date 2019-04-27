@@ -1,5 +1,6 @@
 package com.vsm.devcase.domain.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -19,15 +20,21 @@ public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    @ApiModelProperty(notes = "Identificador único do cliente", required = true)
     private Long id;
 
     @Column(length = 100)
+    @ApiModelProperty(notes = "Nome do cliente", required = true)
     private Long nome;
 
-    @Enumerated(EnumType.STRING)
+    @Column
+    @Enumerated(EnumType.STRING)    
+    @ApiModelProperty(notes = "Sexo do cliente")
     private SexoEnum sexo;
 
-    
+    @Column
+    @ApiModelProperty(notes = "Pontuação total do cliente")
     private BigDecimal pontuacao;
 
     public Cliente() {

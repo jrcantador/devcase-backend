@@ -1,5 +1,6 @@
 package com.vsm.devcase.domain.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,18 +23,25 @@ public class Venda implements Serializable {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(notes = "Identificador único da venda", required = true)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente Cliente;
+    @ApiModelProperty(notes = "Identificador único do cliente relacionado a venda", required = true)
+    private Cliente cliente;
 
     @Column(precision = 12, scale = 2)
+    @ApiModelProperty(notes = "Valor total da venda")
     private BigDecimal valorTotal;
 
+    @Column
+    @ApiModelProperty(notes = "Pontuação da venda")
     private Long pontuacao;
 
+    @Column
     @Temporal(TemporalType.TIMESTAMP)
+    @ApiModelProperty(notes = "Data a quala venda foi realizada")
     private Date data;
 
     public Venda() {
@@ -48,11 +56,11 @@ public class Venda implements Serializable {
     }
 
     public Cliente getCliente() {
-        return Cliente;
+        return cliente;
     }
 
     public void setCliente(Cliente Cliente) {
-        this.Cliente = Cliente;
+        this.cliente = Cliente;
     }
 
     public Long getPontuacao() {

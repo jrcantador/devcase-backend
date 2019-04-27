@@ -2,6 +2,9 @@ package com.vsm.devcase.application.resource;
 
 import com.vsm.devcase.domain.model.Cliente;
 import com.vsm.devcase.infra.repository.ClienteRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ public class ClienteResource {
      *
      * @return Json com todas a vendas
      */
+    @ApiOperation(value = "Lista todos os clientes", notes = "Lista todos os clientes", response = Cliente.class, responseContainer = "List")
     @GetMapping("/")
     public List<Cliente> list() {
         return clienteRepository.findAll();
@@ -44,6 +48,7 @@ public class ClienteResource {
      * @param cliente Json de Cliente
      * @return 201 - Created
      */
+    @ApiOperation(value = "Recurso para cadastra Cliente", notes = "Recurso para cadastra Cliente", response = ResponseEntity.class, responseContainer = "create")
     @PostMapping("/")
     public ResponseEntity<Object> create(@RequestBody Cliente cliente) {
         Cliente clienteSalvo = clienteRepository.save(cliente);
