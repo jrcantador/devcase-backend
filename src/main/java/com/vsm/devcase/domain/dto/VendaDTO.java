@@ -2,7 +2,6 @@ package com.vsm.devcase.domain.dto;
 
 import com.vsm.devcase.domain.model.SexoEnum;
 import java.util.Date;
-import javafx.scene.chart.PieChart.Data;
 
 /**
  *

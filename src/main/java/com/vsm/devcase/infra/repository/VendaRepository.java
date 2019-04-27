@@ -1,5 +1,6 @@
 package com.vsm.devcase.infra.repository;
 
+import com.vsm.devcase.domain.model.Cliente;
 import com.vsm.devcase.domain.model.SexoEnum;
 import com.vsm.devcase.domain.model.Venda;
 import java.util.Date;
@@ -34,7 +35,6 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
      * @param DataFinal
      * @return Lista de vendas
      */
-    @Query("SELECT v FROM Venda v JOIN v.cliente c WHERE c.sexo = :sexo and v.data between :dataInicial and :dataFinal")    
-    List<Venda> findHistoricByGenderBetweenDates(SexoEnum sexo, Date dataInicial, Date dataFinal);
-
+    @Query("SELECT v FROM Venda v JOIN v.cliente c WHERE c.sexo = :sexo and v.data between :dataInicial and :dataFinal")
+    List<Venda> findHistoricByGenderBetweenDates(SexoEnum sexo, Date dataInicial, Date dataFinal);    
 }

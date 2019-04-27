@@ -5,8 +5,6 @@ import com.vsm.devcase.domain.dto.VendaDTO;
 import com.vsm.devcase.domain.model.Venda;
 import com.vsm.devcase.infra.repository.VendaRepository;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  * @author junior.cantador
  */
 @RestController
-@RequestMapping("vendas")
+@RequestMapping("/vendas")
 public class VendaResource {
 
     private VendaRepository vendaRepository;
@@ -53,7 +51,7 @@ public class VendaResource {
      * @return Lista com o historico de vendas
      */
     @ApiOperation(value = "Recurso que retorna o historico de vendas entre um periodo de datas", notes = "Recurso que retorna o historico de vendas entre um periodo de datas", response = Venda.class, responseContainer = "List")    
-    @PostMapping("historic-dates")
+    @PostMapping("/historic-dates")
     public List<Venda> historicBetweenDates(@RequestBody VendaDTO venda) {
         return vendaRepository.findHistoricBetweenDates(venda.getDataInicial(), venda.getDataFinal());
     }
@@ -66,7 +64,7 @@ public class VendaResource {
      * @return Lista com o historico de vendas
      */
     @ApiOperation(value = "Recurso que retorna o histórico de vendas por sexo e entre um periodo de datas", notes = "Recurso que retorna o histoorico de vendas por sexo e entre um periodo de datas", response = Venda.class, responseContainer = "List")    
-    @PostMapping("historic-gender-dates")
+    @PostMapping("/historic-gender-dates")
     public List<Venda> historicByGenderBetweenDates(@RequestBody VendaDTO venda) {
         return vendaRepository.findHistoricByGenderBetweenDates(venda.getSexo(), venda.getDataInicial(), venda.getDataFinal());
     }
@@ -83,7 +81,7 @@ public class VendaResource {
 
         Long pontuacao = validation.calcularPontuacao(venda.getValorTotal());
         venda.setPontuacao(pontuacao);
-        Venda vendaSalva = vendaRepository.save(venda);
+            Venda vendaSalva = vendaRepository.save(venda);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(vendaSalva.getId()).toUri();

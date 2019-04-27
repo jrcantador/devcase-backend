@@ -26,7 +26,7 @@ public class Venda implements Serializable {
     @ApiModelProperty(notes = "Identificador único da venda", required = true)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id", nullable = false)
     @ApiModelProperty(notes = "Identificador único do cliente relacionado a venda", required = true)
     private Cliente cliente;

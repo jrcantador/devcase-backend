@@ -19,17 +19,17 @@ import javax.persistence.Id;
 public class Cliente implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     @ApiModelProperty(notes = "Identificador único do cliente", required = true)
     private Long id;
 
     @Column(length = 100)
     @ApiModelProperty(notes = "Nome do cliente", required = true)
-    private Long nome;
+    private String nome;
 
     @Column
-    @Enumerated(EnumType.STRING)    
+    @Enumerated(EnumType.STRING)
     @ApiModelProperty(notes = "Sexo do cliente")
     private SexoEnum sexo;
 
@@ -40,6 +40,11 @@ public class Cliente implements Serializable {
     public Cliente() {
     }
 
+    public Cliente(String nome, SexoEnum sexo) {
+        this.nome = nome;
+        this.sexo = sexo;
+    }
+
     public Long getId() {
         return id;
     }
@@ -48,11 +53,11 @@ public class Cliente implements Serializable {
         this.id = id;
     }
 
-    public Long getNome() {
+    public String getNome() {
         return nome;
     }
 
-    public void setNome(Long nome) {
+    public void setNome(String nome) {
         this.nome = nome;
     }
 

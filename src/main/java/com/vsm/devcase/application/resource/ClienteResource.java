@@ -3,25 +3,23 @@ package com.vsm.devcase.application.resource;
 import com.vsm.devcase.domain.model.Cliente;
 import com.vsm.devcase.infra.repository.ClienteRepository;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  *
  * @author junior.cantador
  */
-@Controller
-@RequestMapping("clientes")
+@RestController
+@RequestMapping("/clientes")
 public class ClienteResource {
 
     private ClienteRepository clienteRepository;

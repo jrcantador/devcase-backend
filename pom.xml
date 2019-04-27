@@ -31,14 +31,8 @@
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+            <artifactId>mysql-connector-java</artifactId>            
+        </dependency>        
         <!--Swagger-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -57,20 +51,67 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-	    <groupId>io.jsonwebtoken</groupId>
-	    <artifactId>jjwt</artifactId>
-	    <version>0.7.0</version>
-	</dependency>
-
-    </dependencies>
-
-    <build>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- H2 Database-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies> 
+    
+    <build>       
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+                <artifactId>spring-boot-maven-plugin</artifactId>                                
+            </plugin>                            
         </plugins>
-    </build>
-
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>     
+    
+    <profiles>
+        <profile>
+            <id>develop</id>            
+            <properties>
+                <activeProfile>develop</activeProfile>                
+                <url>jdbc:mysql://localhost/pdv?useTimezone=true&amp;serverTimezone=UTC</url>
+                <username>root</username>
+                <password></password>
+                <ddl>update</ddl>
+                <driver>com.mysql.jdbc.Driver</driver>
+                <showsql>false</showsql>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>                
+                <activeProfile>test</activeProfile>
+                <url>jdbc:h2:~/testdb;DB_CLOSE_ON_EXIT=FALSE</url>
+                <username>sa</username>
+                <password></password>
+                <driver>org.h2.Driver</driver>
+                <ddl>create</ddl>
+                <showsql>true</showsql>
+            </properties>
+        </profile>
+    </profiles>
 </project>
