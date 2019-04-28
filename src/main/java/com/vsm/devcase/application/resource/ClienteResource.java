@@ -5,6 +5,7 @@ import com.vsm.devcase.infra.repository.ClienteRepository;
 import io.swagger.annotations.ApiOperation;
 import java.net.URI;
 import java.util.List;
+import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class ClienteResource {
     public List<Cliente> list() {
         return clienteRepository.findAll();
     }
-
+   
     /**
      * Recurso para cadastrar Cliente
      *

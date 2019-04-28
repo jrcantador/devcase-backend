@@ -87,7 +87,30 @@
     
     <profiles>
         <profile>
-            <id>develop</id>            
+            <id>develop</id>    
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>        
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.20</version>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>                     
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.20</version>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
             <properties>
                 <activeProfile>develop</activeProfile>                
                 <url>jdbc:mysql://localhost/pdv?useTimezone=true&amp;serverTimezone=UTC</url>
@@ -103,9 +126,21 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.20</version>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                        </configuration>
+                    </plugin>          
+                </plugins>
+            </build>
             <properties>                
                 <activeProfile>test</activeProfile>
-                <url>jdbc:h2:~/testdb;DB_CLOSE_ON_EXIT=FALSE</url>
+                <url>jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</url>
                 <username>sa</username>
                 <password></password>
                 <driver>org.h2.Driver</driver>

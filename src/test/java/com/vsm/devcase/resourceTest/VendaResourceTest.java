@@ -19,8 +19,10 @@ import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -41,6 +43,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(properties = {"server.port=8888"})
 @ActiveProfiles("test")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VendaResourceTest {
 
     final String BASE_PATH = "http://localhost:8888/vendas/";
@@ -55,20 +58,10 @@ public class VendaResourceTest {
     private RestTemplate restTemplate;
     private HttpHeaders headers;
     private ObjectMapper mapper = new ObjectMapper();
-    private Cliente cliente = new Cliente("Mariana Silva", SexoEnum.FEMININO);
     private Date dataAtual = new Date();
 
     @Before
     public void SetUp() throws Exception {
-        Venda venda = new Venda();
-        venda.setCliente(cliente);
-        venda.setValorTotal(new BigDecimal(500.00));
-        venda.setPontuacao(10L);
-        venda.setData(dataAtual);
-
-        cliente = clienteRepository.save(cliente);
-        vendaRepository.save(venda);
-
         restTemplate = new RestTemplate();
         headers = new HttpHeaders();
         headers.setBearerAuth(TOKEN);
@@ -78,8 +71,29 @@ public class VendaResourceTest {
     public void tearDown() throws Exception {
     }
 
+    /**
+     * Caso de Teste 1 - Listar vendas
+     * 
+     * 1 - Cadastrado um cliente
+     * 2 - Cadastrada uma venda
+     * 3 - Executada rotina de listar vendas
+     * 4 - Testado informações retornadas na lista
+     * 
+     * 
+     * @throws JsonProcessingException
+     * @throws IOException
+     */
     @Test
-    public void testList() throws JsonProcessingException, IOException {
+    public void test01() throws JsonProcessingException, IOException {
+        Cliente cliente = new Cliente("Cliente Teste 1", SexoEnum.FEMININO);
+        Venda venda = new Venda();
+        venda.setCliente(cliente);
+        venda.setValorTotal(new BigDecimal(500.00));
+        venda.setPontuacao(10L);
+        venda.setData(dataAtual);
+
+        cliente = clienteRepository.save(cliente);
+        vendaRepository.save(venda);
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         ResponseEntity<String> response = restTemplate.exchange(BASE_PATH, HttpMethod.GET, entity, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
@@ -87,15 +101,30 @@ public class VendaResourceTest {
 
         Assert.assertNotNull(vendas);
         Assert.assertEquals(1, vendas.size());
-        Assert.assertEquals("Mariana Silva", vendas.get(0).getCliente().getNome());
+        Assert.assertEquals("Cliente Teste 1", vendas.get(0).getCliente().getNome());
         Assert.assertEquals(SexoEnum.FEMININO, vendas.get(0).getCliente().getSexo());
         Assert.assertEquals(new BigDecimal(500.00).setScale(2), vendas.get(0).getValorTotal());
         Assert.assertEquals(Long.valueOf(10), vendas.get(0).getPontuacao());
         Assert.assertEquals(dataAtual, vendas.get(0).getData());
     }
 
+    /**
+     * Caso de teste 2 - Cadastrar uma venda
+     * 
+     * 1 - Cadastrado um cliente
+     * 2 - Cadastrada uma venda 
+     * 3 - Verifica se venda foi cadastrada
+     * 4 - Teste informações da venda
+     * 5 - Testa pontuação do cliente
+     *
+     * @throws JsonProcessingException
+     * @throws IOException
+     */
     @Test
-    public void testCreate() throws JsonProcessingException, IOException {
+    public void test02() throws JsonProcessingException, IOException {
+        Cliente cliente = new Cliente("Cliente Teste 2", SexoEnum.MASCULINO);
+        cliente = clienteRepository.save(cliente);
+      
         Venda venda = new Venda();
         venda.setCliente(cliente);
         venda.setValorTotal(new BigDecimal(1000.00));
@@ -105,10 +134,33 @@ public class VendaResourceTest {
         ResponseEntity<String> response = restTemplate.exchange(BASE_PATH, HttpMethod.POST, entity, String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+        Venda vendaSalva = vendaRepository.findByCliente(cliente.getId()).get(0);
+        
+        Assert.assertNotNull(vendaSalva);                        
+        Assert.assertEquals("Cliente Teste 2", vendaSalva.getCliente().getNome());
+        Assert.assertEquals(SexoEnum.MASCULINO, vendaSalva.getCliente().getSexo());
+        Assert.assertEquals(new BigDecimal(20.00).setScale(2), vendaSalva.getCliente().getPontuacao());
+        Assert.assertEquals(new BigDecimal(1000.00).setScale(2), vendaSalva.getValorTotal());
+        Assert.assertEquals(Long.valueOf(20), vendaSalva.getPontuacao());
+        Assert.assertEquals(dataAtual, vendaSalva.getData());                       
     }
 
+    /**
+     * Caso de teste 3 - Lista com todas as vendas no intervalo de duas datas
+     * 
+     * 1 - Cadastrado dois clientes
+     * 2 - Cadastrada duas vendas 
+     * 3 - Testado se as duas vendas foram cadastradas
+     * 4 - Testado informações das vendas cadastradas
+     * 5 - Testado informções dos clientes
+     * 6 - Teatado a quantidade de informaçoes que a rotina retorna as informações
+     *     de acordo com as datas informadas
+     * 
+     * @throws JsonProcessingException
+     * @throws IOException
+     */
     @Test
-    public void testHistoric() throws JsonProcessingException, IOException {
+    public void test03() throws JsonProcessingException, IOException {
 
         Calendar dataInicial = Calendar.getInstance();
         dataInicial.setTime(dataAtual);
@@ -164,8 +216,21 @@ public class VendaResourceTest {
         }
     }
 
+    
+    /**
+     * Caso de teste 4 - Lista com todas as vendas de determinado sexo e no intervalo de duas datas
+     * 
+     * 1 - Cadastrado dois clientes
+     * 2 - Cadastrada duas vendas 
+     * 3 - Testado se as duas vendas foram cadastradas
+     * 4 - Testado informações das vendas cadastradas
+     * 5 - Testado informções dos clientes
+     * 6 - Teatado a quantidade de informaçoes que a rotina retorna as informações
+     *     de acordo com o sexo e as datas informadas 
+     *     
+     **/    
     @Test
-    public void testHistoricByGender() throws JsonProcessingException, IOException {
+    public void test04() throws JsonProcessingException, IOException {
 
         Calendar dataInicial = Calendar.getInstance();
         dataInicial.setTime(dataAtual);

@@ -2,9 +2,13 @@ package com.vsm.devcase.application.resource;
 
 import com.vsm.devcase.application.validation.VendaValidation;
 import com.vsm.devcase.domain.dto.VendaDTO;
+import com.vsm.devcase.domain.model.Cliente;
 import com.vsm.devcase.domain.model.Venda;
+import com.vsm.devcase.infra.repository.ClienteRepository;
 import com.vsm.devcase.infra.repository.VendaRepository;
 import io.swagger.annotations.ApiOperation;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +30,13 @@ public class VendaResource {
 
     private VendaRepository vendaRepository;
     private VendaValidation validation;
+    private ClienteRepository clienteRepository;
 
     @Autowired
-    public VendaResource(VendaRepository vendaRepository, VendaValidation validation) {
+    public VendaResource(VendaRepository vendaRepository, VendaValidation validation, ClienteRepository clienteRepository) {
         this.vendaRepository = vendaRepository;
         this.validation = validation;
+        this.clienteRepository = clienteRepository;
     }
 
     /**
@@ -38,7 +44,7 @@ public class VendaResource {
      *
      * @return Json com todas a vendas
      */
-    @ApiOperation(value = "Lista todas as vendas", notes = "Lista todas as vendas", response = Venda.class, responseContainer = "List")  
+    @ApiOperation(value = "Lista todas as vendas", notes = "Lista todas as vendas", response = Venda.class, responseContainer = "List")
     @GetMapping("/")
     public List<Venda> list() {
         return vendaRepository.findAll();
@@ -50,7 +56,7 @@ public class VendaResource {
      * @param venda Json com as informaçõe de data inicial e data final
      * @return Lista com o historico de vendas
      */
-    @ApiOperation(value = "Recurso que retorna o historico de vendas entre um periodo de datas", notes = "Recurso que retorna o historico de vendas entre um periodo de datas", response = Venda.class, responseContainer = "List")    
+    @ApiOperation(value = "Recurso que retorna o historico de vendas entre um periodo de datas", notes = "Recurso que retorna o historico de vendas entre um periodo de datas", response = Venda.class, responseContainer = "List")
     @PostMapping("/historic-dates")
     public List<Venda> historicBetweenDates(@RequestBody VendaDTO venda) {
         return vendaRepository.findHistoricBetweenDates(venda.getDataInicial(), venda.getDataFinal());
@@ -63,7 +69,7 @@ public class VendaResource {
      * @param venda Json com as informações de sexo, data inicial e data final
      * @return Lista com o historico de vendas
      */
-    @ApiOperation(value = "Recurso que retorna o histórico de vendas por sexo e entre um periodo de datas", notes = "Recurso que retorna o histoorico de vendas por sexo e entre um periodo de datas", response = Venda.class, responseContainer = "List")    
+    @ApiOperation(value = "Recurso que retorna o histórico de vendas por sexo e entre um periodo de datas", notes = "Recurso que retorna o histoorico de vendas por sexo e entre um periodo de datas", response = Venda.class, responseContainer = "List")
     @PostMapping("/historic-gender-dates")
     public List<Venda> historicByGenderBetweenDates(@RequestBody VendaDTO venda) {
         return vendaRepository.findHistoricByGenderBetweenDates(venda.getSexo(), venda.getDataInicial(), venda.getDataFinal());
@@ -75,13 +81,17 @@ public class VendaResource {
      * @param venda Json de Venda
      * @return 201 - Created
      */
-    @ApiOperation(value = "Recurso para cadastrar Venda", notes = "Recurso para cadastra Venda", response = ResponseEntity.class, responseContainer = "create")    
+    @ApiOperation(value = "Recurso para cadastrar Venda", notes = "Recurso para cadastra Venda", response = ResponseEntity.class, responseContainer = "create")
     @PostMapping("/")
     public ResponseEntity<Object> create(@RequestBody Venda venda) {
 
         Long pontuacao = validation.calcularPontuacao(venda.getValorTotal());
         venda.setPontuacao(pontuacao);
-            Venda vendaSalva = vendaRepository.save(venda);
+        Venda vendaSalva = vendaRepository.save(venda);
+        
+        Cliente cliente = clienteRepository.getOne(venda.getCliente().getId());
+        cliente.setPontuacao(cliente.getPontuacao() == null ? new BigDecimal(BigInteger.ZERO).add(new BigDecimal(pontuacao)) : cliente.getPontuacao().add(new BigDecimal(pontuacao)));
+        clienteRepository.save(cliente);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(vendaSalva.getId()).toUri();
